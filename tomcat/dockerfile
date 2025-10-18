@@ -1,0 +1,36 @@
+FROM tomcat:latest
+
+LABEL name="fun-webserver" \
+      environment="dev/test only" \
+      maintainer="pkg2027" \
+      description="Tomcat server running as non-root user" \
+      version="5.0" \
+      build-date="12-06-2025" \
+      usage="Simple Tomcat web server with custom homepage"
+
+RUN apt update -y && \
+    apt upgrade -y
+
+RUN groupadd -r tomcatgroup && \
+    useradd -r -g tomcatgroup -d /usr/local/tomcat -s /bin/bash tomcatuser
+
+RUN rm -rf /usr/local/tomcat/webapps/ROOT/*
+
+COPY source/ /usr/local/tomcat/webapps/ROOT/
+
+# Ensure proper ownership of important folders
+RUN chown -R tomcatuser:tomcatgroup /usr/local/tomcat/webapps \
+    /usr/local/tomcat/logs \
+    /usr/local/tomcat/temp \
+    /usr/local/tomcat/work \
+    /usr/local/tomcat/conf
+
+# Health check
+HEALTHCHECK CMD curl --fail http://localhost:8080/ || exit 1
+
+USER tomcatuser
+
+# EXPOSE 8080 (or 8760 if you changed server.xml)
+EXPOSE 8080
+
+CMD ["catalina.sh", "run"]

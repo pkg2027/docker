@@ -1,0 +1,45 @@
+FROM httpd:latest
+
+LABEL description="Fun-webserver" \
+      environment="for test/dev only" \
+      author="pkg2027" \
+      build-date="07-06-2025" \
+      version="4.0"
+
+# Install utilities
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y tree && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user and group
+RUN addgroup --system webgroup && \
+    adduser --system --ingroup webgroup webuser
+
+# Copy website files
+COPY source/ /usr/local/apache2/htdocs/
+
+# Update Apache config:
+# - change port
+# - change user and group
+# - add ServerName
+RUN echo "ServerName localhost" >> /usr/local/apache2/conf/httpd.conf && \
+    sed -i 's/^Listen 80/Listen 8080/' /usr/local/apache2/conf/httpd.conf && \
+    sed -i 's/^User .*/User webuser/' /usr/local/apache2/conf/httpd.conf && \
+    sed -i 's/^Group .*/Group webgroup/' /usr/local/apache2/conf/httpd.conf
+
+# Ensure webuser has ownership and access
+RUN mkdir -p /usr/local/apache2/logs /usr/local/apache2/run /usr/local/apache2/conf && \
+    chown -R webuser:webgroup /usr/local/apache2
+
+# Expose the custom port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK CMD curl --fail http://localhost:8080/ || exit 1
+
+# Switch to non-root user
+USER webuser
+
+# Run Apache in foreground
+CMD ["httpd-foreground"]

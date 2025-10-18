@@ -1,0 +1,23 @@
+FROM nginx:stable-perl
+
+LABEL description="music-festival-webserver" \
+      environment="for test/dev only" \
+      DockerVersion="6.0" \
+      Author="pkg2027" \
+      built-date="10-06-2025"
+
+# Install tools
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install tree -y && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+
+# Copy static site files
+COPY source/ /usr/share/nginx/html/
+
+# Healthcheck
+HEALTHCHECK CMD curl --fail http://localhost/ || exit 1
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

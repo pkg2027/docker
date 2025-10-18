@@ -1,0 +1,43 @@
+FROM ubuntu:latest
+
+LABEL description="fun-webserver" \
+      environment="for test/dev only" \
+      author="pkg2027" \
+      build-date="08-06-2025" \
+      version="5.0"
+
+# Install Apache and tools
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y apache2 curl tree && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user and group for Apache to drop into
+RUN addgroup --system webgroup && \
+    adduser --system --ingroup webgroup --no-create-home webuser
+
+# Configure Apache to use:
+# - Port 8085
+# - Custom user/group
+RUN sed -i 's/^Listen 80/Listen 8085/' /etc/apache2/ports.conf && \
+    echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
+    sed -i 's/^User .*/User webuser/' /etc/apache2/apache2.conf && \
+    sed -i 's/^Group .*/Group webgroup/' /etc/apache2/apache2.conf
+
+# Fix permissions for Apache runtime dirs
+RUN mkdir -p /var/www/html /var/log/apache2 /var/run/apache2 && \
+    chown -R webuser:webgroup /var/www /var/log/apache2 /var/run/apache2
+
+# Copy static files
+COPY source/ /var/www/html/
+
+# Healthcheck
+HEALTHCHECK CMD curl --fail http://localhost:8085/ || exit 1
+
+# Expose port
+EXPOSE 8085
+
+# Don't switch to non-root user
+# Let apache2 drop to webuser via config
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]
