@@ -1,10 +1,10 @@
 FROM nginx:stable-perl
 
-LABEL description="music-festival-webserver" \
+LABEL description="Neural-webserver" \
       environment="for test/dev only" \
       DockerVersion="6.0" \
       Author="pkg2027" \
-      built-date="10-06-2025"
+      built-date="19-10-2025"
 
 # Install tools
 RUN apt update -y && \
