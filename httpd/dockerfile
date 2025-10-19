@@ -1,9 +1,9 @@
 FROM httpd:latest
 
-LABEL description="Fun-webserver" \
+LABEL description="edu-webserver" \
       environment="for test/dev only" \
       author="pkg2027" \
-      build-date="07-06-2025" \
+      build-date="19-10-2025" \
       version="4.0"
 
 # Install utilities
