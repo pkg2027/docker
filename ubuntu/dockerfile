@@ -1,9 +1,9 @@
 FROM ubuntu:latest
 
-LABEL description="fun-webserver" \
+LABEL description="photographers-webserver" \
       environment="for test/dev only" \
       author="pkg2027" \
-      build-date="08-06-2025" \
+      build-date="19-10-2025" \
       version="5.0"
 
 # Install Apache and tools
