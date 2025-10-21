@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-LABEL description="photographers-webserver" \
+LABEL description="demo-webserver" \
       environment="for test/dev only" \
       author="pkg2027" \
       build-date="19-10-2025" \

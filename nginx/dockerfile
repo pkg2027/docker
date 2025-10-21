@@ -1,6 +1,6 @@
 FROM nginx:stable-perl
 
-LABEL description="Neural-webserver" \
+LABEL description="testing-webserver" \
       environment="for test/dev only" \
       DockerVersion="6.0" \
       Author="pkg2027" \

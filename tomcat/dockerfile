@@ -1,6 +1,6 @@
 FROM tomcat:latest
 
-LABEL name="games-webserver" \
+LABEL name="demo-webserver" \
       environment="dev/test only" \
       maintainer="pkg2027" \
       description="Tomcat server running as non-root user" \
